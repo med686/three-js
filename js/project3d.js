@@ -12,7 +12,7 @@ scene.add(directionalLight);
 
 // Configurer la caméra
 const aspectRatio = window.innerWidth / window.innerHeight;
-const cameraWidth = 200;
+const cameraWidth = 230;
 const cameraHeight = cameraWidth / aspectRatio;
 const camera = new THREE.OrthographicCamera(
     cameraWidth / -2,  // left
@@ -22,7 +22,7 @@ const camera = new THREE.OrthographicCamera(
     0,
     1000
 );
-camera.position.set(-50, 20, 100);
+camera.position.set(-50, 0, 900);
 camera.lookAt(0, 10, 0);
 
 // Configurer le rendu
@@ -42,24 +42,24 @@ function createBigben() {
     bigben.add(main);
     
     const main2 = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(3, 31, 3),
-        new THREE.MeshLambertMaterial({ color: 0xffd750})
+        new THREE.BoxBufferGeometry(3, 29, 3),
+        new THREE.MeshLambertMaterial({ color: 0xffd780})
     );
-    main2.position.set(5, -6, 8);
+    main2.position.set(5, -4, 8);
     bigben.add(main2);
 
     const main3 = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(3, 31, 3),
-        new THREE.MeshLambertMaterial({ color: 0xffd750})
+        new THREE.BoxBufferGeometry(3, 29, 3),
+        new THREE.MeshLambertMaterial({ color: 0xffd780})
     );
-    main3.position.set(-5, -6, 8);
+    main3.position.set(-5, -4, 8);
     bigben.add(main3);
 
     const main4 = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(2.2, 31, 3),
-        new THREE.MeshLambertMaterial({ color: 0xffd750})
+        new THREE.BoxBufferGeometry(2.2, 29, 3),
+        new THREE.MeshLambertMaterial({ color: 0xffd780})
     );
-    main4.position.set(0, -6, 8);
+    main4.position.set(0, -4, 8);
     bigben.add(main4);
 
     const cabin = new THREE.Mesh(
@@ -92,16 +92,45 @@ function createBigben() {
     pyramid.rotation.y = Math.PI / 3.9;
     // Add the pyramid to the scene
     bigben.add(pyramid);
-    
-    bigben.position.y = -2;
-    
+    const leg = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(3, 23, 3),
+        new THREE.MeshLambertMaterial({ color: 0xffd730})
+    );
+    leg.position.set(5, -30, 0);
+    bigben.add(leg);
+    const leg1 = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(3, 23, 3),
+        new THREE.MeshLambertMaterial({ color: 0xffd730})
+    );
+    leg1.position.set(-5, -30, 0);
+    bigben.add(leg1);
+    const belt = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(17, 2, 0.7),
+        new THREE.MeshLambertMaterial({ color: 0x8B4513})
+    );
+    belt.position.set(0, -20, 9);
+    bigben.add(belt);
+    bigben.position.y = 12;
     return bigben;   
 } 
-
+const textureLoader = new THREE.TextureLoader();
+const texture = textureLoader.load('ballon3d.png');
+const geometry = new THREE.PlaneGeometry(30, 20);
+const material = new THREE.MeshBasicMaterial({ map: texture }); 
+const plane = new THREE.Mesh(geometry, material);
+plane.position.set(30, 25, 130);
+scene.add(plane);  
 // Keyboard Controls
 const keys = {};
 window.addEventListener('keydown', (e) => {
     keys[e.key] = true;
+    if (e.key === 'a' || e.key === 'A') {
+        bigben.traverse((child) => {
+            if (child.isMesh) {
+                child.material.color.set(0xffffff); // Set color to yellow
+            }
+        });
+    }
 });
 window.addEventListener('keyup', (e) => {
     keys[e.key] = false;
@@ -116,11 +145,11 @@ function animate() {
     requestAnimationFrame(animate);
 
     // Move Big Ben
-    if (keys['ArrowUp']) bigben.position.z -= 0.5;
-    if (keys['ArrowDown']) bigben.position.z += 0.5;
+    if (keys['ArrowUp']) plane.position.y+= 0.5;
+    if (keys['ArrowDown']) plane.position.y -= 0.5;
     if (keys['ArrowLeft']) bigben.position.x -= 0.5;
     if (keys['ArrowRight']) bigben.position.x += 0.5;
-
+    
     // Re-render the scene
     renderer.render(scene, camera);
 }
